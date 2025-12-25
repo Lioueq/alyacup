@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <format>
 
 std::string formatNumber(int n) {
     std::string s = "";
@@ -18,7 +17,6 @@ int main()
     std::vector<sf::Texture> frames;
     for (int i = 1; i <= 26; ++i) {
        std::string path = "../../images/tsukasa/c68fd3c377f7cc6ed90cbea037483692-" + formatNumber(i) + ".jpg";
-       std::cout << path << '\n';
        sf::Texture texture(path);
        frames.push_back(texture);
     }
@@ -28,6 +26,8 @@ int main()
     int currentFrame = 0;
     sf::Sprite sprite(frames[currentFrame]);
     sf::Clock clock;
+    bool isGrabbed = false;
+    sf::Vector2i grabbedDelta;
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -36,6 +36,25 @@ int main()
             {
                 window.close();
             }
+            if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+            {
+                if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+                {
+                    isGrabbed = true;
+                    grabbedDelta = window.getPosition() - sf::Mouse::getPosition();
+                }
+            }
+            if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+            {
+                if (mouseButtonReleased->button == sf::Mouse::Button::Left)
+                {
+                    isGrabbed = false;
+                }
+            }
+            if (event->is<sf::Event::MouseMoved>() && isGrabbed)
+            {
+                window.setPosition(sf::Mouse::getPosition() + grabbedDelta);
+            }
         }
         if (clock.getElapsedTime().asMilliseconds() > 100)
         {
@@ -43,7 +62,6 @@ int main()
             sprite.setTexture(frames[currentFrame]);
             clock.restart();
         }
-        window.clear();
         window.draw(sprite);
         window.display();
     }
