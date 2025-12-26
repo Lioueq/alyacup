@@ -1,30 +1,15 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
+#include <string>
+#include <optional>
+#include "../include/gifController.hpp"
 
-std::string formatNumber(int n) {
-    std::string s = "";
-    s += std::to_string(n);
-    while (s.size() != 4) {
-        s = "0" + s;
-    }
-    return s;
-}
 
 int main()
 {
-    sf::Image img("../../images/tsukasa/c68fd3c377f7cc6ed90cbea037483692-0001.jpg");
-    sf::Vector2u windowSize = img.getSize();
-    std::vector<sf::Texture> frames;
-    for (int i = 1; i <= 26; ++i) {
-       std::string path = "../../images/tsukasa/c68fd3c377f7cc6ed90cbea037483692-" + formatNumber(i) + ".jpg";
-       sf::Texture texture(path);
-       frames.push_back(texture);
-    }
-    auto window = sf::RenderWindow(sf::VideoMode(windowSize), "giffy", sf::Style::None);
+    alyatools::GifController gifController("../../images/tsukasa/");
+    auto window = sf::RenderWindow(sf::VideoMode(gifController.getGifSize()), "giffy", sf::Style::None);
     window.setFramerateLimit(144);
 
-    int currentFrame = 0;
-    sf::Sprite sprite(frames[currentFrame]);
     sf::Clock clock;
     bool isGrabbed = false;
     sf::Vector2i grabbedDelta;
@@ -43,6 +28,9 @@ int main()
                     isGrabbed = true;
                     grabbedDelta = window.getPosition() - sf::Mouse::getPosition();
                 }
+                // if (mouseButtonPressed->button == sf::Mouse::Button::Right) {
+                //
+                // }
             }
             if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
             {
@@ -58,11 +46,10 @@ int main()
         }
         if (clock.getElapsedTime().asMilliseconds() > 100)
         {
-            currentFrame = (currentFrame + 1) % frames.size();
-            sprite.setTexture(frames[currentFrame]);
+            gifController.nextTexture();
             clock.restart();
         }
-        window.draw(sprite);
+        window.draw(gifController.getCurrentSprite());
         window.display();
     }
 }
