@@ -4,7 +4,7 @@
 #include <vector>
 #include <optional>
 
-namespace alyatools {
+namespace alya {
     std::string formatNumber(int n);
 
     class GifController {

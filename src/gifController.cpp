@@ -1,4 +1,5 @@
 #include "../include/gifController.hpp"
+#include "../include/tools.hpp"
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -6,16 +7,17 @@
 
 namespace fs = std::filesystem;
 
-namespace alyatools {
+namespace alya {
     GifController::GifController(std::string path) : currentFrame(0) {
         if (fs::exists(path) && fs::is_directory(path)) {
             for (const auto& entry : fs::directory_iterator(path)) {
                 if (fs::is_regular_file(entry.status())) {
-                    if (frames.size() == 0) {
-                        sf::Image img(path + entry.path().filename().string());
+                    sf::Image img(path + entry.path().filename().string());
+                    tools::transformImage(img);
+                    if (frames.empty()) {
                         windowSize = img.getSize();
                     }
-                    sf::Texture texture(path + entry.path().filename().string());
+                    sf::Texture texture(img);
                     frames.push_back(texture);
                 }
             }

@@ -6,10 +6,9 @@
 
 int main()
 {
-    alyatools::GifController gifController("../../images/tsukasa/");
+    alya::GifController gifController("../../images/tsukasa/");
     auto window = sf::RenderWindow(sf::VideoMode(gifController.getGifSize()), "giffy", sf::Style::None);
     window.setFramerateLimit(144);
-
     sf::Clock clock;
     bool isGrabbed = false;
     sf::Vector2i grabbedDelta;
@@ -28,8 +27,9 @@ int main()
                     isGrabbed = true;
                     grabbedDelta = window.getPosition() - sf::Mouse::getPosition();
                 }
-                // if (mouseButtonPressed->button == sf::Mouse::Button::Right) {
-                //
+                // if (mouseButtonPressed->button == sf::Mouse::Button::Middle) {
+                //     std::cout << "context menu pos: ";
+                //     std::cout << menuPosition.x << ' ' << menuPosition.y << '\n';
                 // }
             }
             if (const auto* mouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
@@ -37,6 +37,9 @@ int main()
                 if (mouseButtonReleased->button == sf::Mouse::Button::Left)
                 {
                     isGrabbed = false;
+                }
+                if (mouseButtonReleased->button == sf::Mouse::Button::Right) {
+                    ;
                 }
             }
             if (event->is<sf::Event::MouseMoved>() && isGrabbed)
