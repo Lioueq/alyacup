@@ -14,6 +14,7 @@ namespace alya {
                 if (fs::is_regular_file(entry.status())) {
                     sf::Image img(path + entry.path().filename().string());
                     tools::transformImage(img);
+                    // tools::transparentImage(img);
                     if (frames.empty()) {
                         windowSize = img.getSize();
                     }

@@ -9,6 +9,7 @@
 
 namespace alya::tools {
     void transformImage(sf::Image& img);
+    void transparentImage(sf::Image& img);
 }
 
 #endif //ALYACUP_TOOLS_HPP
