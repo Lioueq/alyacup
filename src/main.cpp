@@ -5,10 +5,16 @@
 #include <dwmapi.h>
 #include "../include/gifController.hpp"
 
+void popupMenu(HWND hwnd) {
+    HMENU hmenu = CreatePopupMenu();
+    AppendMenuW(hmenu, MF_POPUP, 2, L"Close");
+    SetMenu(hwnd, hmenu);
+}
+
 
 int main()
 {
-    alya::GifController gifController("../../images/tsukasa/");
+    alya::GifController gifController("../../images/nun/");
     auto window = sf::RenderWindow(sf::VideoMode(gifController.getGifSize()), "Giffy", sf::Style::None);
     window.setFramerateLimit(144);
 
@@ -48,7 +54,8 @@ int main()
                     isGrabbed = false;
                 }
                 if (mouseButtonReleased->button == sf::Mouse::Button::Right) {
-                    ;
+                    HWND hwnd = window.getNativeHandle();
+                    popupMenu(hwnd);
                 }
             }
             if (event->is<sf::Event::MouseMoved>() && isGrabbed)

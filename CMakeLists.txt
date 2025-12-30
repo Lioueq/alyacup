@@ -19,8 +19,10 @@ add_executable(main
         include/tools.hpp
         src/tools.cpp
 )
+
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE
         SFML::Graphics
         dwmapi
 )
+target_link_options(main PRIVATE -static)
