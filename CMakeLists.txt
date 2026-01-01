@@ -3,7 +3,8 @@ project(alyacup LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(main src/main.cpp)
+add_executable(main WIN32 src/main.cpp)
 
 target_compile_features(main PRIVATE cxx_std_20)
+target_link_options(main PRIVATE -municode)
 
