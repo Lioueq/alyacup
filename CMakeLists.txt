@@ -18,7 +18,7 @@ set(GLFW_BUILD_DOCS OFF)
 
 FetchContent_MakeAvailable(glfw)
 
-add_executable(main main.cpp)
+add_executable(main src/main.cpp)
 
 target_compile_features(main PRIVATE cxx_std_20)
 
