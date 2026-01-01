@@ -1,5 +1,4 @@
-.clang-format
 cmake-build-debug
 cmake-build-release
 .clang-format
-.idea/
+.idea
