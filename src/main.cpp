@@ -13,6 +13,9 @@ const int WIDTH  = 250;
 ULONG_PTR gdiplusToken;
 GdiplusStartupInput gdiplusStartupInput;
 Image* img;
+GUID dimension = FrameDimensionTime;
+UINT frameCount;
+UINT currentFrame = 0;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -34,10 +37,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     // Create the window.
 
     HWND hwnd = CreateWindowEx(
-        0,                              // Optional window styles.
+        WS_EX_LAYERED | WS_EX_TOPMOST, // Optional window styles.
         CLASS_NAME,                     // Window class
         L"Alyacup",    // Window text
-        WS_OVERLAPPEDWINDOW,            // Window style
+        WS_POPUP | WS_VISIBLE,            // Window style
 
         // Size and position
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -72,28 +75,53 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            img = new Image(L"../../images/teto/teto_1.jpg");
-            MoveWindow(hwnd, 0, 0, WIDTH, HEIGHT, TRUE);
+            img = new Image(L"../../images/teto/teto_2.gif");
+            frameCount = img->GetFrameCount(&dimension);
+
+            SetLayeredWindowAttributes(hwnd, RGB(255, 0, 255), 0, LWA_COLORKEY);
+
+            MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
+            SetTimer(hwnd, 1, 100, NULL);
             return 0;
         }
 
         case WM_DESTROY:
+        {
+            KillTimer(hwnd, 1);
             delete img;
             GdiplusShutdown(gdiplusToken);
             PostQuitMessage(0);
             return 0;
+        }
 
         case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
-
             Graphics graphics(hdc);
-            graphics.DrawImage(img, Rect(0, 0, WIDTH, HEIGHT));
 
+            Bitmap buffer(WIDTH, HEIGHT);
+            Graphics g_buf(&buffer);
+
+            g_buf.Clear(Color::Transparent);
+            g_buf.DrawImage(img, Rect(0, 0, WIDTH, HEIGHT));
+
+            graphics.DrawImage(&buffer, 0, 0);
             EndPaint(hwnd, &ps);
-        }
             return 0;
+        }
+
+
+        case WM_TIMER:
+        {
+            if (wParam == 1) {
+                currentFrame = (currentFrame + 1) % frameCount;
+                img->SelectActiveFrame(&FrameDimensionTime, currentFrame);
+
+                InvalidateRect(hwnd, NULL, FALSE);
+            }
+            return 0;
+        }
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
