@@ -21,7 +21,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
 
     // Register the window class.
     const wchar_t CLASS_NAME[]  = L"Alyacup";
@@ -31,7 +31,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     wc.lpfnWndProc   = WindowProc;
     wc.hInstance     = hInstance;
     wc.lpszClassName = CLASS_NAME;
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 
     RegisterClass(&wc);
 
@@ -46,13 +46,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         // Size and position
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 
-        NULL,       // Parent window
-        NULL,       // Menu
+        nullptr,       // Parent window
+        nullptr,       // Menu
         hInstance,  // Instance handle
-        NULL        // Additional application data
+        nullptr        // Additional application data
         );
 
-    if (hwnd == NULL)
+    if (hwnd == nullptr)
     {
         return 0;
     }
@@ -62,7 +62,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     // Run the message loop.
 
     MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
+    while (GetMessage(&msg, nullptr, 0, 0) > 0)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -83,7 +83,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
-            SetTimer(hwnd, 1, 100, NULL);
+            SetTimer(hwnd, 1, 100, nullptr);
             return 0;
         }
 
@@ -120,7 +120,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 currentFrame = (currentFrame + 1) % frameCount;
                 img->SelectActiveFrame(&FrameDimensionTime, currentFrame);
 
-                InvalidateRect(hwnd, NULL, FALSE);
+                InvalidateRect(hwnd, nullptr, FALSE);
             }
             return 0;
         }
