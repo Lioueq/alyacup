@@ -24,13 +24,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     // Register the window class.
-    const wchar_t CLASS_NAME[]  = L"Sample Window Class";
+    const wchar_t CLASS_NAME[]  = L"Alyacup";
 
     WNDCLASS wc = { };
 
     wc.lpfnWndProc   = WindowProc;
     wc.hInstance     = hInstance;
     wc.lpszClassName = CLASS_NAME;
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
     RegisterClass(&wc);
 
@@ -77,9 +78,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             img = new Image(L"../../images/teto/teto_2.gif");
             frameCount = img->GetFrameCount(&dimension);
-
-            SetLayeredWindowAttributes(hwnd, RGB(255, 0, 255), 0, LWA_COLORKEY);
-
+            if (frameCount == 0) {
+                frameCount  = 1;
+            }
+            SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
             SetTimer(hwnd, 1, 100, NULL);
             return 0;
@@ -103,7 +105,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             Bitmap buffer(WIDTH, HEIGHT);
             Graphics g_buf(&buffer);
 
-            g_buf.Clear(Color::Transparent);
+            g_buf.Clear(Color::Black);
             g_buf.DrawImage(img, Rect(0, 0, WIDTH, HEIGHT));
 
             graphics.DrawImage(&buffer, 0, 0);
