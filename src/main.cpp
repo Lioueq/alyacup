@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <gdiplus.h>
 #include "../include/imageController.h"
+#include "../include/utils.h"
 
 using namespace Gdiplus;
 using namespace alyacup;
@@ -67,7 +68,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
         {
             imgController = new tools::ImageController(L"../../images/teto/teto_2.gif");
-
             SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
@@ -112,6 +112,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONDOWN:
         {
             SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+            return 0;
+        }
+
+        case WM_CONTEXTMENU:
+        {
+            HMENU hMenu = CreatePopupMenu();
+            AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
+            int x = LOWORD(lParam);
+            int y = HIWORD(lParam);
+            UINT option = TrackPopupMenu(hMenu, TPM_RETURNCMD, x, y, 0, hwnd, nullptr);
+            if (option == tools::EXIT_ID) {
+                PostQuitMessage(0);
+            }
+            DestroyMenu(hMenu);
             return 0;
         }
 
