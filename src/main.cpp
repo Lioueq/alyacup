@@ -110,13 +110,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return 0;
         }
 
-
         case WM_TIMER:
         {
             if (wParam == 1) {
                 imgController->nextFrame();
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
+            return 0;
+        }
+
+        case WM_LBUTTONDOWN:
+        {
+            SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
             return 0;
         }
 
