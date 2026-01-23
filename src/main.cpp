@@ -4,18 +4,18 @@
 
 #include <windows.h>
 #include <gdiplus.h>
+#include "../include/imageController.h"
 
 using namespace Gdiplus;
+using namespace alyacup;
 
 const int HEIGHT = 350;
 const int WIDTH  = 250;
 
 ULONG_PTR gdiplusToken;
 GdiplusStartupInput gdiplusStartupInput;
-Image* img;
-GUID dimension = FrameDimensionTime;
-UINT frameCount;
-UINT currentFrame = 0;
+
+tools::ImageController* imgController;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -76,11 +76,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            img = new Image(L"../../images/teto/teto_2.gif");
-            frameCount = img->GetFrameCount(&dimension);
-            if (frameCount == 0) {
-                frameCount  = 1;
-            }
+            imgController = new tools::ImageController(L"../../images/teto/teto_2.gif");
+
             SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
@@ -90,7 +87,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {
             KillTimer(hwnd, 1);
-            delete img;
+            delete imgController;
             GdiplusShutdown(gdiplusToken);
             PostQuitMessage(0);
             return 0;
@@ -106,7 +103,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             Graphics g_buf(&buffer);
 
             g_buf.Clear(Color::Black);
-            g_buf.DrawImage(img, Rect(0, 0, WIDTH, HEIGHT));
+            g_buf.DrawImage(imgController->getImage(), Rect(0, 0, WIDTH, HEIGHT));
 
             graphics.DrawImage(&buffer, 0, 0);
             EndPaint(hwnd, &ps);
@@ -117,9 +114,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_TIMER:
         {
             if (wParam == 1) {
-                currentFrame = (currentFrame + 1) % frameCount;
-                img->SelectActiveFrame(&FrameDimensionTime, currentFrame);
-
+                imgController->nextFrame();
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
             return 0;
