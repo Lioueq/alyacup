@@ -8,7 +8,7 @@
 namespace alyacup::tools {
     enum optionID {
         EXIT_ID = 100,
-        RESIZE_ID
+        RESIZE_ID = 101
     };
 }
 

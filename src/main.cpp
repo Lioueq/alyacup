@@ -17,6 +17,7 @@ ULONG_PTR gdiplusToken;
 GdiplusStartupInput gdiplusStartupInput;
 
 tools::ImageController* imgController;
+RECT rc;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -67,9 +68,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            imgController = new tools::ImageController(L"../../images/teto/teto_2.gif");
+            imgController = new tools::ImageController(L"../../images/teto/teto_2.gif");  // ../../images/other/girl_1.gif
             SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
-            MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT, TRUE);
+            MoveWindow(hwnd, 800, 270, imgController->w, imgController->h,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
             return 0;
         }
@@ -88,12 +89,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
             Graphics graphics(hdc);
-
-            Bitmap buffer(WIDTH, HEIGHT);
+            GetClientRect(hwnd, &rc);
+            Bitmap buffer(rc.right, rc.bottom);
             Graphics g_buf(&buffer);
 
             g_buf.Clear(Color::Black);
-            g_buf.DrawImage(imgController->getImage(), Rect(0, 0, WIDTH, HEIGHT));
+            g_buf.DrawImage(imgController->getImage(), Rect(0, 0, rc.right, rc.bottom));
 
             graphics.DrawImage(&buffer, 0, 0);
             EndPaint(hwnd, &ps);
@@ -118,12 +119,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_CONTEXTMENU:
         {
             HMENU hMenu = CreatePopupMenu();
+            AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
             AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
             int x = LOWORD(lParam);
             int y = HIWORD(lParam);
             UINT option = TrackPopupMenu(hMenu, TPM_RETURNCMD, x, y, 0, hwnd, nullptr);
-            if (option == tools::EXIT_ID) {
+            if (option == tools::EXIT_ID)
+            {
                 PostQuitMessage(0);
+            }
+            else if (option == tools::RESIZE_ID)
+            {
+                DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+                style ^= WS_THICKFRAME;
+                SetWindowLongPtr(hwnd, GWL_STYLE, style);
+                SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
             }
             DestroyMenu(hMenu);
             return 0;

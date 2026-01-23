@@ -20,6 +20,8 @@ namespace alyacup::tools {
 
         void nextFrame();
 
+        UINT w, h;
+
     private:
         Image* img;
         UINT frameCount;
