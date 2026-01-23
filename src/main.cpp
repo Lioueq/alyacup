@@ -22,10 +22,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-
-    // Register the window class.
     const wchar_t CLASS_NAME[]  = L"Alyacup";
-
     WNDCLASS wc = { };
 
     wc.lpfnWndProc   = WindowProc;
@@ -35,20 +32,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     RegisterClass(&wc);
 
-    // Create the window.
-
     HWND hwnd = CreateWindowEx(
-        WS_EX_LAYERED | WS_EX_TOPMOST, // Optional window styles.
-        CLASS_NAME,                     // Window class
-        L"Alyacup",    // Window text
+        WS_EX_LAYERED | WS_EX_TOPMOST,    // Optional window styles.
+        CLASS_NAME,                       // Window class
+        L"Alyacup",                       // Window text
         WS_POPUP | WS_VISIBLE,            // Window style
-
-        // Size and position
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, // Size and position
         nullptr,       // Parent window
         nullptr,       // Menu
-        hInstance,  // Instance handle
+        hInstance,     // Instance handle
         nullptr        // Additional application data
         );
 
@@ -58,8 +50,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
 
     ShowWindow(hwnd, nCmdShow);
-
-    // Run the message loop.
 
     MSG msg = { };
     while (GetMessage(&msg, nullptr, 0, 0) > 0)
