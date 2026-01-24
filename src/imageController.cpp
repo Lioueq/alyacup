@@ -17,8 +17,6 @@ namespace alyacup::tools {
             frameCount = 1;
         }
         currentFrame = 1;
-        w = img->GetWidth();
-        h = img->GetHeight();
     }
 
     ImageController::~ImageController() {

@@ -78,7 +78,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 return -1;
             }
             SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
-            MoveWindow(hwnd, 800, 270, imgController->w, imgController->h,TRUE);
+            MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
             return 0;
         }
@@ -163,20 +163,20 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
             auto* tempController = new tools::ImageController(path.c_str());
             delete imgController;
             imgController = tempController;
-            SetWindowPos(hwnd, nullptr, 0, 0, imgController->w, imgController->h,
+            SetWindowPos(hwnd, nullptr, 0, 0, WIDTH, HEIGHT,
             SWP_NOMOVE | SWP_NOZORDER);
             InvalidateRect(hwnd, nullptr, TRUE);
         }
         catch (...) {
             MessageBox(hwnd, L"error", L"error", MB_OK);
+            throw std::exception();
         }
     }
     DestroyMenu(hMenu);
 }
 
-
 std::wstring onDialogMenu() {  // sample from winapi github
-    std::wstring path   = L"";
+    std::wstring path = L"";
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED |
     COINIT_DISABLE_OLE1DDE);
     if (SUCCEEDED(hr))
