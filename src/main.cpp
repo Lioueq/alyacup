@@ -68,8 +68,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            imgController = new tools::ImageController(L"../../images/teto/teto_2.gif");  // ../../images/other/girl_1.gif
-            SetLayeredWindowAttributes(hwnd, 0, 76, LWA_ALPHA);
+            imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
+            SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, imgController->w, imgController->h,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
             return 0;
@@ -118,28 +118,33 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_CONTEXTMENU:
         {
-            HMENU hMenu = CreatePopupMenu();
-            AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
-            AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
-            int x = LOWORD(lParam);
-            int y = HIWORD(lParam);
-            UINT option = TrackPopupMenu(hMenu, TPM_RETURNCMD, x, y, 0, hwnd, nullptr);
-            if (option == tools::EXIT_ID)
-            {
-                PostQuitMessage(0);
-            }
-            else if (option == tools::RESIZE_ID)
-            {
-                DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
-                style ^= WS_THICKFRAME;
-                SetWindowLongPtr(hwnd, GWL_STYLE, style);
-                SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-            }
-            DestroyMenu(hMenu);
+            onContextMenu(hwnd, lParam);
             return 0;
         }
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+
+void onContextMenu(HWND hwnd, LPARAM lParam) {
+    HMENU hMenu = CreatePopupMenu();
+    AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
+    AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
+    int x = LOWORD(lParam);
+    int y = HIWORD(lParam);
+    UINT option = TrackPopupMenu(hMenu, TPM_RETURNCMD, x, y, 0, hwnd, nullptr);
+    if (option == tools::EXIT_ID)
+    {
+        PostQuitMessage(0);
+    }
+    else if (option == tools::RESIZE_ID)
+    {
+        DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
+        style ^= WS_THICKFRAME;
+        SetWindowLongPtr(hwnd, GWL_STYLE, style);
+        SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+    DestroyMenu(hMenu);
 }
