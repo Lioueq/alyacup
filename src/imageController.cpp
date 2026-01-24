@@ -1,18 +1,20 @@
 #include "../include/imageController.h"
 
+#include <stdexcept>
+
 using namespace Gdiplus;
 
 namespace alyacup::tools {
     ImageController::ImageController(const wchar_t* path) {
         img = new Image(path);
         if (img->GetLastStatus() != Ok) {
-            frameCount = 0;
+            delete img;
+            img = nullptr;
+            throw std::runtime_error("load image error");
         }
-        else {
-            frameCount = img->GetFrameCount(&FrameDimensionTime);
-            if (frameCount == 0) {
-                frameCount = 1;
-            }
+        frameCount = img->GetFrameCount(&FrameDimensionTime);
+        if (frameCount == 0) {
+            frameCount = 1;
         }
         currentFrame = 1;
         w = img->GetWidth();

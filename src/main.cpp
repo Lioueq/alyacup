@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <shobjidl.h>
 #include <gdiplus.h>
+#include <string>
 #include "../include/imageController.h"
 #include "../include/utils.h"
 
@@ -69,7 +70,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
+            try {
+                imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
+            }
+            catch (...) {
+                FatalError(hwnd, L"error");
+                return -1;
+            }
             SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, imgController->w, imgController->h,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
@@ -145,34 +152,45 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
         DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
         style ^= WS_THICKFRAME;
         SetWindowLongPtr(hwnd, GWL_STYLE, style);
-        SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
+        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
             SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
-    else if (option == tools::OPEN_ID) {
-        PCWSTR path = onDialogMenu();
-        delete imgController;
-        imgController = new tools::ImageController(path);
+    else if (option == tools::OPEN_ID)
+    {
+        std::wstring path = onDialogMenu();
+        if (path.empty()) return;
+        try {
+            auto* tempController = new tools::ImageController(path.c_str());
+            delete imgController;
+            imgController = tempController;
+            SetWindowPos(hwnd, nullptr, 0, 0, imgController->w, imgController->h,
+            SWP_NOMOVE | SWP_NOZORDER);
+            InvalidateRect(hwnd, nullptr, TRUE);
+        }
+        catch (...) {
+            MessageBox(hwnd, L"error", L"error", MB_OK);
+        }
     }
     DestroyMenu(hMenu);
 }
 
 
-PCWSTR onDialogMenu() {  // sample from winapi github
-    PCWSTR path = L"";
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+std::wstring onDialogMenu() {  // sample from winapi github
+    std::wstring path   = L"";
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED |
     COINIT_DISABLE_OLE1DDE);
     if (SUCCEEDED(hr))
     {
         IFileOpenDialog *pFileOpen;
 
         // Create the FileOpenDialog object.
-        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+        hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL,
                 IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
 
         if (SUCCEEDED(hr))
         {
             // Show the Open dialog box.
-            hr = pFileOpen->Show(NULL);
+            hr = pFileOpen->Show(nullptr);
 
             // Get the file name from the dialog box.
             if (SUCCEEDED(hr))
@@ -198,4 +216,9 @@ PCWSTR onDialogMenu() {  // sample from winapi github
         CoUninitialize();
     }
     return path;
+}
+
+void FatalError(HWND hwnd, PWSTR e) {
+    MessageBox(nullptr, e, L"error", MB_OK);
+    DestroyWindow(hwnd);
 }

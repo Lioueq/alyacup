@@ -16,16 +16,15 @@ namespace alyacup::tools {
         ImageController(const wchar_t* path);
         ~ImageController();
 
-
         Image* getImage() const;
 
         void nextFrame();
 
         UINT w, h;
+        UINT frameCount;
 
     private:
         Image* img;
-        UINT frameCount;
         UINT currentFrame;
     };
 }

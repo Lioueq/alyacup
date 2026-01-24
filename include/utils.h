@@ -6,7 +6,8 @@
 #define ALYACUP_UTILS_H
 
 void onContextMenu(HWND hwnd, LPARAM lParam);
-PCWSTR onDialogMenu();
+std::wstring onDialogMenu();
+void FatalError(HWND hwnd, PWSTR error);
 
 namespace alyacup::tools {
     enum optionID {
