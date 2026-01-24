@@ -16,6 +16,7 @@ namespace alyacup::tools {
         ImageController(const wchar_t* path);
         ~ImageController();
 
+
         Image* getImage() const;
 
         void nextFrame();

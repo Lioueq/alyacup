@@ -6,11 +6,13 @@
 #define ALYACUP_UTILS_H
 
 void onContextMenu(HWND hwnd, LPARAM lParam);
+PCWSTR onDialogMenu();
 
 namespace alyacup::tools {
     enum optionID {
         EXIT_ID = 100,
-        RESIZE_ID = 101
+        RESIZE_ID = 101,
+        OPEN_ID = 102
     };
 }
 

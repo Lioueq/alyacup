@@ -3,6 +3,7 @@
 #endif
 
 #include <windows.h>
+#include <shobjidl.h>
 #include <gdiplus.h>
 #include "../include/imageController.h"
 #include "../include/utils.h"
@@ -129,6 +130,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void onContextMenu(HWND hwnd, LPARAM lParam) {
     HMENU hMenu = CreatePopupMenu();
+    AppendMenu(hMenu, MF_STRING, tools::OPEN_ID, L"open");
     AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
     AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
     int x = LOWORD(lParam);
@@ -146,5 +148,54 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
         SetWindowPos(hwnd, NULL, 0, 0, 0, 0,
             SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
+    else if (option == tools::OPEN_ID) {
+        PCWSTR path = onDialogMenu();
+        delete imgController;
+        imgController = new tools::ImageController(path);
+    }
     DestroyMenu(hMenu);
+}
+
+
+PCWSTR onDialogMenu() {  // sample from winapi github
+    PCWSTR path = L"";
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+    COINIT_DISABLE_OLE1DDE);
+    if (SUCCEEDED(hr))
+    {
+        IFileOpenDialog *pFileOpen;
+
+        // Create the FileOpenDialog object.
+        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+                IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+        if (SUCCEEDED(hr))
+        {
+            // Show the Open dialog box.
+            hr = pFileOpen->Show(NULL);
+
+            // Get the file name from the dialog box.
+            if (SUCCEEDED(hr))
+            {
+                IShellItem *pItem;
+                hr = pFileOpen->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
+                    PWSTR pszFilePath;
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                    // Display the file name to the user.
+                    if (SUCCEEDED(hr))
+                    {
+                        path = pszFilePath;
+                        CoTaskMemFree(pszFilePath);
+                    }
+                    pItem->Release();
+                }
+            }
+            pFileOpen->Release();
+        }
+        CoUninitialize();
+    }
+    return path;
 }
