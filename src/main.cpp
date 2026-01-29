@@ -72,13 +72,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            try {
-                imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
-            }
-            catch (...) {
-                FatalError(hwnd, L"error");
-                return -1;
-            }
+            // try {
+            //     imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
+            // }
+            // catch (...) {
+            //     FatalError(hwnd, L"error");
+            //     return -1;
+            // }
             SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
@@ -102,9 +102,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             GetClientRect(hwnd, &rc);
             Bitmap buffer(rc.right, rc.bottom);
             Graphics g_buf(&buffer);
-
             g_buf.Clear(Color::Black);
-            g_buf.DrawImage(imgController->getImage(), Rect(0, 0, rc.right, rc.bottom));
+            if (imgController) {
+                g_buf.DrawImage(imgController->getImage(), Rect(0, 0, rc.right, rc.bottom));
+            }
+            else {
+                const Pen* p = new Pen{Color::Black};
+                g_buf.DrawRectangle(p, 0, 0 , rc.right, rc.bottom);
+                delete p;
+            }
 
             graphics.DrawImage(&buffer, 0, 0);
             EndPaint(hwnd, &ps);
@@ -113,7 +119,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_TIMER:
         {
-            if (wParam == 1) {
+            if (wParam == 1 && imgController) {
                 imgController->nextFrame();
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
