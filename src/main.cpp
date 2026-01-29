@@ -16,6 +16,10 @@ const int HEIGHT = 350;
 const int WIDTH  = 250;
 
 bool isFixed = false;
+bool isTransparency = false;
+BYTE alphaValue = 200;
+int wheelAcc = 0;
+
 
 ULONG_PTR gdiplusToken;
 GdiplusStartupInput gdiplusStartupInput;
@@ -73,7 +77,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
+            SetLayeredWindowAttributes(hwnd, 0, alphaValue, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
             return 0;
@@ -133,6 +137,27 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             onContextMenu(hwnd, lParam);
             return 0;
         }
+        case WM_MOUSEWHEEL:
+        {
+            if (isTransparency) {
+                int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+                wheelAcc += delta;
+                while (wheelAcc >= WHEEL_DELTA) {
+                    wheelAcc -= WHEEL_DELTA;
+                    if (alphaValue <= 245) {
+                        alphaValue += 10;
+                    }
+                    else alphaValue = 255;
+                }
+                while (wheelAcc <= -WHEEL_DELTA) {
+                    wheelAcc += WHEEL_DELTA;
+                    if (alphaValue >= 10) alphaValue -= 10;
+                    else alphaValue = 0;
+                }
+            }
+            SetLayeredWindowAttributes(hwnd, 0, alphaValue, LWA_ALPHA);
+            return 0;
+        }
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -179,6 +204,10 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
     else if (option == tools::FIXED_ID)
     {
         isFixed = !isFixed;
+    }
+    else if (option == tools::TRANSPARENCY_ID)
+    {
+        isTransparency = !isTransparency;
     }
     DestroyMenu(hMenu);
 }
