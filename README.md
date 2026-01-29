@@ -2,7 +2,7 @@
   <img src="./images/icon/icon.ico" alt="alyacup">
 </p>
 
-<p align="center">Gif overlay for windows</p>
+<h3 align="center">Alyacup — Image Overlay for Windows</h3>
 
 
 ## 🪷 Instruction
@@ -17,7 +17,7 @@
 
 - In Fixed Mode (Click-through), the image ignores mouse clicks. To close the app, use the "Exit" button in the Windows Taskbar.
 
-- You can use samples from images directory.
+- You can use samples from the `/images` directory.
 
 ## 🌸 Preview
 
