@@ -72,13 +72,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
         {
-            // try {
-            //     imgController = new tools::ImageController(L"../../images/other/girl_2.gif");  // ../../images/other/girl_1.gif
-            // }
-            // catch (...) {
-            //     FatalError(hwnd, L"error");
-            //     return -1;
-            // }
             SetLayeredWindowAttributes(hwnd, 0, 200, LWA_ALPHA);
             MoveWindow(hwnd, 800, 270, WIDTH, HEIGHT,TRUE);
             SetTimer(hwnd, 1, 100, nullptr);
