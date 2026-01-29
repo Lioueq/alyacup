@@ -229,6 +229,11 @@ std::wstring onDialogMenu() {  // sample from winapi github
         if (SUCCEEDED(hr))
         {
             // Show the Open dialog box.
+            COMDLG_FILTERSPEC rgSpec[] = {
+                { L"images", L"*.jpg;*.jpeg;*.png;*.gif" },
+                { L"all Files", L"*.*" }
+            };
+            pFileOpen->SetFileTypes(ARRAYSIZE(rgSpec), rgSpec);
             hr = pFileOpen->Show(nullptr);
 
             // Get the file name from the dialog box.
