@@ -5,6 +5,8 @@
 #ifndef ALYACUP_UTILS_H
 #define ALYACUP_UTILS_H
 
+#define IDI_ICON 200
+
 void onContextMenu(HWND hwnd, LPARAM lParam);
 std::wstring onDialogMenu();
 void FatalError(HWND hwnd, PWSTR error);
