@@ -131,7 +131,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             return 0;
         }
-
         case WM_CONTEXTMENU:
         {
             onContextMenu(hwnd, lParam);
@@ -203,6 +202,9 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
     }
     else if (option == tools::FIXED_ID)
     {
+        DWORD style = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+        style ^= WS_EX_TRANSPARENT;
+        SetWindowLongPtrW(hwnd, GWL_EXSTYLE, style);
         isFixed = !isFixed;
     }
     else if (option == tools::TRANSPARENCY_ID)
