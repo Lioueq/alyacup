@@ -15,6 +15,8 @@ using namespace alyacup;
 const int HEIGHT = 350;
 const int WIDTH  = 250;
 
+bool isFixed = false;
+
 ULONG_PTR gdiplusToken;
 GdiplusStartupInput gdiplusStartupInput;
 
@@ -120,7 +122,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_LBUTTONDOWN:
         {
-            SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+            if (!isFixed) {
+                SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+            }
             return 0;
         }
 
@@ -139,6 +143,7 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
     HMENU hMenu = CreatePopupMenu();
     AppendMenu(hMenu, MF_STRING, tools::OPEN_ID, L"open");
     AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
+    AppendMenu(hMenu, MF_STRING, tools::FIXED_ID, L"fixed");
     AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
     int x = LOWORD(lParam);
     int y = HIWORD(lParam);
@@ -152,8 +157,6 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
         DWORD style = GetWindowLongPtr(hwnd, GWL_STYLE);
         style ^= WS_THICKFRAME;
         SetWindowLongPtr(hwnd, GWL_STYLE, style);
-        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
     }
     else if (option == tools::OPEN_ID)
     {
@@ -171,6 +174,10 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
             MessageBox(hwnd, L"error", L"error", MB_OK);
             throw std::exception();
         }
+    }
+    else if (option == tools::FIXED_ID)
+    {
+        isFixed = !isFixed;
     }
     DestroyMenu(hMenu);
 }
