@@ -144,6 +144,7 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
     AppendMenu(hMenu, MF_STRING, tools::OPEN_ID, L"open");
     AppendMenu(hMenu, MF_STRING, tools::RESIZE_ID, L"resize");
     AppendMenu(hMenu, MF_STRING, tools::FIXED_ID, L"fixed");
+    AppendMenu(hMenu, MF_STRING, tools::TRANSPARENCY_ID, L"transparency");
     AppendMenu(hMenu, MF_STRING, tools::EXIT_ID, L"exit");
     int x = LOWORD(lParam);
     int y = HIWORD(lParam);
@@ -163,7 +164,7 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
         std::wstring path = onDialogMenu();
         if (path.empty()) return;
         try {
-            auto* tempController = new tools::ImageController(path.c_str());
+            auto* tempController = new tools::ImageController(path.data());
             delete imgController;
             imgController = tempController;
             SetWindowPos(hwnd, nullptr, 0, 0, WIDTH, HEIGHT,
@@ -183,7 +184,7 @@ void onContextMenu(HWND hwnd, LPARAM lParam) {
 }
 
 std::wstring onDialogMenu() {  // sample from winapi github
-    std::wstring path = L"";
+    std::wstring path;
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED |
     COINIT_DISABLE_OLE1DDE);
     if (SUCCEEDED(hr))

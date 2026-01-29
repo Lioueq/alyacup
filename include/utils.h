@@ -16,7 +16,8 @@ namespace alyacup::tools {
         EXIT_ID = 100,
         RESIZE_ID = 101,
         OPEN_ID = 102,
-        FIXED_ID = 103
+        FIXED_ID = 103,
+        TRANSPARENCY_ID = 104
     };
 }
 
